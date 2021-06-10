@@ -78,6 +78,11 @@ def empty(lines):
 def add(problem_name, lines):
     if empty(lines):
         return
+    prefixPath = get_Path('Codes', '')
+    try:
+        os.makedirs(prefixPath)
+    except:
+        pass 
     f = open(get_Path('Codes/' + problem_name, '.cpp'), "w")
     for i in lines:
         f.write(i.text + '\n')
