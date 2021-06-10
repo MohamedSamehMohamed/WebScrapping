@@ -89,10 +89,11 @@ def add(problem_name, lines):
     f.close()
     print(problem_name + ' added')
 
-def storeProblems():
+def storeProblems(withLogin):
     driver = createDriver()
     driver.get(url)
-    load_cookies(driver)
+    if withLogin:
+        load_cookies(driver)
     problemNames = set()
     for pageNumber in range(1, 1000):
         try:
@@ -125,4 +126,7 @@ def storeProblems():
             break
     driver.quit()
 
-storeProblems()
+
+# set 0 to get problems without login
+# set 1 to get problems with login 
+storeProblems(0)
