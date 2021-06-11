@@ -23,11 +23,3 @@ def getProblemTags():
         dic[problemName] = temp_dic
     return dic
 dic = getProblemTags()
-c = 0
-for i in dic:
-    c += 1
-    if c > 5:
-        break
-    print(i)
-    print(dic[i]['tags'])
-    print(dic[i]['rating'])
