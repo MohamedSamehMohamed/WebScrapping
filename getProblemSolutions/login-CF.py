@@ -166,7 +166,6 @@ def storeProblems(withLogin):
             for row in rows:
                 columns = row.find_elements_by_tag_name('td')
                 problem_name = columns[3].text
-                x = columns[3].find_element_by_tag_name('a')
                 problem_link = columns[3].find_element_by_tag_name('a').get_attribute('href')
                 lang = columns[4].text
                 if columns[5].text == 'Accepted' and problem_name not in problemNames:
@@ -174,6 +173,7 @@ def storeProblems(withLogin):
                         columns[0].click()
                         problemNames.add(problem_name)
                         # problem Tags and rating
+                        problem_real_name = getProblemName(problem_link)
                         problemData = getProblemData(problem_link, dic_problem_Data)
                         problemTags = problemData['tags']
                         problemRating = problemData['rating']
@@ -186,7 +186,9 @@ def storeProblems(withLogin):
                                 lines = ''
                                 for i in all_li:
                                     lines += i.text + '\n'
-                                #add(problem_name, lines, getExtension(lang))
+                                problem_name = problem_name.split('-')[1]
+                                problem_name = problem_real_name + '-' + problem_name
+                                add(problem_name, lines, getExtension(lang))
                                 break
                             except:
                                 time.sleep(1)
