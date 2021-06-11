@@ -126,7 +126,6 @@ def add(problem_name, lines, exten):
 def getProblemName(problem_link):
     try:
         strs = problem_link.split('/')
-        print(strs)
         contestId = -1
         problemOrder = -1
         cnt = 0
@@ -144,14 +143,14 @@ def getProblemName(problem_link):
     except:
         return -1
 
-def getTags(problem_link, dic_problem_tags):
+def getProblemData(problem_link, dic_problem_Data):
     problemName = getProblemName(problem_link)
     print(problemName)
-    if problemName in dic_problem_tags:
-        return dic_problem_tags[problemName]
+    if problemName in dic_problem_Data:
+        return dic_problem_Data[problemName]
     return -1
 def storeProblems(withLogin):
-    dic_problem_tags = getProblemTags()
+    dic_problem_Data = getProblemTags()
     driver = createDriver()
     driver.get(url)
     if withLogin:
@@ -174,8 +173,12 @@ def storeProblems(withLogin):
                     try:
                         columns[0].click()
                         problemNames.add(problem_name)
-                        # problem Tags
-                        problemTags = getTags(problem_link, dic_problem_tags)
+                        # problem Tags and rating
+                        problemData = getProblemData(problem_link, dic_problem_Data)
+                        problemTags = problemData['tags']
+                        problemRating = problemData['rating']
+                        print('Tags -> ' , problemTags)
+                        print('Rating -> ' , problemRating)
                         for rep in range(3):
                             try:
                                 tableInside = driver.find_element_by_xpath('//*[@id="facebox"]/div/div/div/pre/code/ol')
@@ -183,7 +186,7 @@ def storeProblems(withLogin):
                                 lines = ''
                                 for i in all_li:
                                     lines += i.text + '\n'
-                                add(problem_name, lines, getExtension(lang))
+                                #add(problem_name, lines, getExtension(lang))
                                 break
                             except:
                                 time.sleep(1)
