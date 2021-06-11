@@ -8,10 +8,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import pickle
 import os
+from getProblemTags import getProblemTags
 from selenium.webdriver.common.keys import Keys
 
 # change those
-username = 'your username in codeforces'
+username = 'MohamedSameh'
 email = 'email or username used in login'
 password = 'password'
 
@@ -122,8 +123,35 @@ def add(problem_name, lines, exten):
     f.write(lines)
     f.close()
     print(problem_name + ' added')
+def getProblemName(problem_link):
+    try:
+        strs = problem_link.split('/')
+        print(strs)
+        contestId = -1
+        problemOrder = -1
+        cnt = 0
+        idx = -1
+        for s in strs:
+            if s == 'gym' or s == 'contest':
+                idx = cnt
+                break
+            cnt += 1
+        if idx == -1:
+            return -1
+        contestId = strs[idx+1]
+        problemOrder = strs[idx+3]
+        return str(contestId) + str(problemOrder)
+    except:
+        return -1
 
+def getTags(problem_link, dic_problem_tags):
+    problemName = getProblemName(problem_link)
+    print(problemName)
+    if problemName in dic_problem_tags:
+        return dic_problem_tags[problemName]
+    return -1
 def storeProblems(withLogin):
+    dic_problem_tags = getProblemTags()
     driver = createDriver()
     driver.get(url)
     if withLogin:
@@ -139,11 +167,15 @@ def storeProblems(withLogin):
             for row in rows:
                 columns = row.find_elements_by_tag_name('td')
                 problem_name = columns[3].text
+                x = columns[3].find_element_by_tag_name('a')
+                problem_link = columns[3].find_element_by_tag_name('a').get_attribute('href')
                 lang = columns[4].text
                 if columns[5].text == 'Accepted' and problem_name not in problemNames:
                     try:
                         columns[0].click()
                         problemNames.add(problem_name)
+                        # problem Tags
+                        problemTags = getTags(problem_link, dic_problem_tags)
                         for rep in range(3):
                             try:
                                 tableInside = driver.find_element_by_xpath('//*[@id="facebox"]/div/div/div/pre/code/ol')
