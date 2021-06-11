@@ -102,7 +102,7 @@ def valid(lines):
     return 1
 
 def add(problem_name, lines):
-    if node valid(lines):
+    if not valid(lines):
         return
     prefixPath = get_Path('Codes', '')
     try:
@@ -110,8 +110,7 @@ def add(problem_name, lines):
     except:
         pass
     f = open(get_Path('Codes/' + problem_name, '.cpp'), "w")
-    for i in lines:
-        f.write(i.text + '\n')
+    f.write(lines)
     f.close()
     print(problem_name + ' added')
 
@@ -138,7 +137,10 @@ def storeProblems(withLogin):
                         for rep in range(3):
                             try:
                                 tableInside = driver.find_element_by_xpath('//*[@id="facebox"]/div/div/div/pre/code/ol')
-                                lines = tableInside.find_elements_by_tag_name('li')
+                                all_li = tableInside.find_elements_by_tag_name('li')
+                                lines = ''
+                                for i in all_li:
+                                    lines += i.text + '\n'
                                 add(problem_name, lines)
                                 break
                             except:
