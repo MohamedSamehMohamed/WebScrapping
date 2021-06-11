@@ -174,6 +174,7 @@ def storeProblems(withLogin):
                     try:
                         columns[0].click()
                         problemNames.add(problem_name)
+                        # problem Tags
                         problemTags = getTags(problem_link, dic_problem_tags)
                         for rep in range(3):
                             try:
@@ -182,7 +183,7 @@ def storeProblems(withLogin):
                                 lines = ''
                                 for i in all_li:
                                     lines += i.text + '\n'
-                                #add(problem_name, lines, getExtension(lang))
+                                add(problem_name, lines, getExtension(lang))
                                 break
                             except:
                                 time.sleep(1)
