@@ -76,8 +76,6 @@ def getExtension(lang):
         return '.py'
     # other lang
     return '.txt'
-def testTag():
-    pass
 
 def notFull(lines):
     cnt = 0
