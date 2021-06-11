@@ -67,7 +67,15 @@ def createDriver():
     chrome_options.add_experimental_option("prefs",prefs)
     driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=chrome_options)
     return driver
-
+def getExtension(lang):
+    if 'C++' in lang:
+        return '.cpp'
+    if 'Java' in lang:
+        return '.java'
+    if 'Py' in lang:
+        return '.py'
+    # other lang
+    return '.txt'
 def notFull(lines):
     cnt = 0
     idx = lines.find('main')
@@ -101,7 +109,7 @@ def valid(lines):
         return 0
     return 1
 
-def add(problem_name, lines):
+def add(problem_name, lines, exten):
     if not valid(lines):
         return
     prefixPath = get_Path('Codes', '')
@@ -109,7 +117,7 @@ def add(problem_name, lines):
         os.makedirs(prefixPath)
     except:
         pass
-    f = open(get_Path('Codes/' + problem_name, '.cpp'), "w")
+    f = open(get_Path('Codes/' + problem_name, exten), "w")
     f.write(lines)
     f.close()
     print(problem_name + ' added')
@@ -130,6 +138,7 @@ def storeProblems(withLogin):
             for row in rows:
                 columns = row.find_elements_by_tag_name('td')
                 problem_name = columns[3].text
+                lang = columns[4].text
                 if columns[5].text == 'Accepted' and problem_name not in problemNames:
                     try:
                         columns[0].click()
@@ -141,7 +150,7 @@ def storeProblems(withLogin):
                                 lines = ''
                                 for i in all_li:
                                     lines += i.text + '\n'
-                                add(problem_name, lines)
+                                add(problem_name, lines, getExtension(lang))
                                 break
                             except:
                                 time.sleep(1)
