@@ -10,12 +10,12 @@ import pickle
 import os
 from selenium.webdriver.common.keys import Keys
 
-# change those 
+# change those
 username = 'your username in codeforces'
 email = 'email or username used in login'
 password = 'password'
 
-# don't change 
+# don't change
 url = 'https://codeforces.com/enter'
 email_xpath = '//*[@id="handleOrEmail"]'
 pass_xpath = '//*[@id="password"]'
@@ -68,6 +68,25 @@ def createDriver():
     driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=chrome_options)
     return driver
 
+def notFull(lines):
+    cnt = 0
+    idx = lines.find('main')
+    if idx == -1:
+        return 1
+    lines = lines[idx:]
+    # to not count '('
+    prvChar = '#'
+    for c in lines:
+        if prvChar != "'" and prvChar != '"':
+            if c == '{' or c == '(':
+                cnt+=1
+            elif c == ')' or c == '}':
+                cnt -= 1
+        if cnt < 0:
+            return 1
+        prvChar = c
+    return cnt != 0
+
 def empty(lines):
     count = 0
     for c in lines:
@@ -75,14 +94,21 @@ def empty(lines):
             count+= 1
     return count == 0
 
-def add(problem_name, lines):
+def valid(lines):
     if empty(lines):
+        return 0
+    if notFull(lines):
+        return 0
+    return 1
+
+def add(problem_name, lines):
+    if node valid(lines):
         return
     prefixPath = get_Path('Codes', '')
     try:
         os.makedirs(prefixPath)
     except:
-        pass 
+        pass
     f = open(get_Path('Codes/' + problem_name, '.cpp'), "w")
     for i in lines:
         f.write(i.text + '\n')
@@ -128,5 +154,5 @@ def storeProblems(withLogin):
 
 
 # set 0 to get problems without login
-# set 1 to get problems with login 
+# set 1 to get problems with login
 storeProblems(0)
