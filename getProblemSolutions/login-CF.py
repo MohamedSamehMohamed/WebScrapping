@@ -78,25 +78,6 @@ def getExtension(lang):
     # other lang
     return '.txt'
 
-def notFull(lines):
-    cnt = 0
-    idx = lines.find('main')
-    if idx == -1:
-        return 1
-    lines = lines[idx:]
-    # to not count '('
-    prvChar = '#'
-    for c in lines:
-        if prvChar != "'" and prvChar != '"':
-            if c == '{' or c == '(':
-                cnt+=1
-            elif c == ')' or c == '}':
-                cnt -= 1
-        if cnt < 0:
-            return 1
-        prvChar = c
-    return cnt != 0
-
 def empty(lines):
     count = 0
     for c in lines:
@@ -106,8 +87,6 @@ def empty(lines):
 
 def valid(lines):
     if empty(lines):
-        return 0
-    if notFull(lines):
         return 0
     return 1
 
@@ -155,6 +134,7 @@ def storeProblems(withLogin):
     driver.get(url)
     if withLogin:
         load_cookies(driver)
+    time.sleep(5)
     problemNames = set()
     for pageNumber in range(1, 1000):
         try:
@@ -175,10 +155,13 @@ def storeProblems(withLogin):
                         # problem Tags and rating
                         problem_real_name = getProblemName(problem_link)
                         problemData = getProblemData(problem_link, dic_problem_Data)
-                        problemTags = problemData['tags']
-                        problemRating = problemData['rating']
-                        print('Tags -> ' , problemTags)
-                        print('Rating -> ' , problemRating)
+                        if problemData != -1:
+                            problemTags = problemData['tags']
+                            problemRating = problemData['rating']
+                            print('Tags -> ' , problemTags)
+                            print('Rating -> ' , problemRating)
+                        else:
+                            print('no data exist for the problem')
                         for rep in range(3):
                             try:
                                 tableInside = driver.find_element_by_xpath('//*[@id="facebox"]/div/div/div/pre/code/ol')
