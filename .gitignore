@@ -1,4 +1,3 @@
 
-getProblemSolutions/__pycache__/getProblemTags.cpython-38.pyc
-getProblemSolutions/Codes/920F- SUM and REPLACE.cpp
-*.cpp
+getProblemSolutions/__pycache__/*
+getProblemSolutions/Codes/*
