@@ -53,8 +53,13 @@ def click(driver, xpath):
 def send_keys(driver, xpath, key):
     WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, xpath))).send_keys(key)
 
+def openUrl(driver, url):
+    if driver.current_url != url:
+        driver.get(url)
+        time.sleep(1.5)
+
 def log_in(driver):
-    driver.get(url)
+    openUrl(driver, url)
     send_keys(driver, email_xpath, email)
     send_keys(driver, pass_xpath, password)
     click(driver, login_xp)
@@ -68,6 +73,7 @@ def createDriver():
     chrome_options.add_experimental_option("prefs",prefs)
     driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=chrome_options)
     return driver
+
 def getExtension(lang):
     if 'C++' in lang:
         return '.cpp'
@@ -86,14 +92,14 @@ def empty(lines):
     return count == 0
 
 def valid(lines):
-    if empty(lines):
-        return 0
-    return 1
+    return not empty(lines)
 
 def add(problem_name, lines, exten):
     if not valid(lines):
         return
+
     prefixPath = get_Path('Codes', '')
+    # try to create the dir if not exist
     try:
         os.makedirs(prefixPath)
     except:
@@ -129,28 +135,25 @@ def getProblemData(problem_link, dic_problem_Data):
         return dic_problem_Data[problemName]
     return -1
 def getLastPageNumber(driver):
-    currentUrl = 'https://codeforces.com/submissions/'+username+'/page/1'
-    driver.get(currentUrl)
-    time.sleep(.75)
-    lastPageNumber = driver.find_element_by_class_name('pagination').find_elements_by_tag_name('li')[-2].find_element_by_tag_name('span')
-    print(lastPageNumber.text)
-    return 1000
-
+    try:
+        currentUrl = 'https://codeforces.com/submissions/'+username+'/page/1'
+        openUrl(driver, currentUrl)
+        lastPageNumber = driver.find_elements_by_class_name('pagination')[1].find_elements_by_tag_name('li')[-2].find_element_by_tag_name('span')
+        return int(lastPageNumber.text)
+    except:
+        return 1
 def storeProblems(withLogin):
     dic_problem_Data = getProblemTags()
     driver = createDriver()
-    driver.get(url)
+    openUrl(driver, url)
     if withLogin:
         load_cookies(driver)
-    time.sleep(5)
     problemNames = set()
     lastPageNumber = getLastPageNumber(driver)
-    exit()
-    for pageNumber in range(1, lastPageNumber):
+    for pageNumber in range(1, lastPageNumber + 1):
         try:
             currentUrl = 'https://codeforces.com/submissions/'+username+'/page/' + str(pageNumber)
-            driver.get(currentUrl)
-            time.sleep(.75)
+            openUrl(driver, currentUrl)
             table = driver.find_element_by_class_name('status-frame-datatable')
             rows = table.find_elements_by_tag_name('tr')[1:]
             for row in rows:
