@@ -5,6 +5,7 @@ from OSPath import *
 from Login import Login
 from ExtractFrom import *
 from SeleniumOperations import *
+
 username = 'MohamedSameh'
 email = ''
 password = ''
@@ -37,7 +38,12 @@ def storeProblems(withLogin):
                     continue
                 if columns[5].text == 'Accepted' and problem_name not in problemNames:
                     try:
-                        columns[0].click()
+                        while True:
+                            try:
+                                columns[0].click()
+                                break
+                            except:
+                                continue
                         problemNames.add(problem_name)
                         # problem Tags and rating
                         problem_real_name = getProblemName(problem_link)
@@ -51,15 +57,14 @@ def storeProblems(withLogin):
                             print('no data exist for the problem')
                         tableInside = -1
                         all_li = -1
-                        for rep in range(3):
+                        while True:
                             try:
                                 tableInside = driver.find_element_by_xpath('//*[@id="facebox"]/div/div/div/pre/code/ol')
                                 all_li = tableInside.find_elements_by_tag_name('li')
                                 break
                             except Exception as e:
-                                print(e)
-                        if all_li == -1:
-                            continue
+                                time.sleep(1)
+                                continue
                         lines = ''
                         for i in all_li:
                             lines += i.text + '\n'
@@ -67,7 +72,7 @@ def storeProblems(withLogin):
                         problem_name = problem_real_name + '-' + problem_name
                         add(problem_name, lines, lang)
                     except Exception as e:
-                        print(e)
+                        pass
                     finally:
                         clickEsc(driver)
         except Exception as e:
