@@ -128,6 +128,14 @@ def getProblemData(problem_link, dic_problem_Data):
     if problemName in dic_problem_Data:
         return dic_problem_Data[problemName]
     return -1
+def getLastPageNumber(driver):
+    currentUrl = 'https://codeforces.com/submissions/'+username+'/page/1'
+    driver.get(currentUrl)
+    time.sleep(.75)
+    lastPageNumber = driver.find_element_by_class_name('pagination').find_elements_by_tag_name('li')[-2].find_element_by_tag_name('span')
+    print(lastPageNumber.text)
+    return 1000
+
 def storeProblems(withLogin):
     dic_problem_Data = getProblemTags()
     driver = createDriver()
@@ -136,7 +144,9 @@ def storeProblems(withLogin):
         load_cookies(driver)
     time.sleep(5)
     problemNames = set()
-    for pageNumber in range(1, 1000):
+    lastPageNumber = getLastPageNumber(driver)
+    exit()
+    for pageNumber in range(1, lastPageNumber):
         try:
             currentUrl = 'https://codeforces.com/submissions/'+username+'/page/' + str(pageNumber)
             driver.get(currentUrl)
