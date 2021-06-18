@@ -22,6 +22,8 @@ def openUrl(driver, url):
     if driver.current_url != url:
         driver.get(url)
         time.sleep(3)
+        if driver.current_url != url:
+            print('cant open')
 
 def createDriver():
     chrome_options = webdriver.ChromeOptions()

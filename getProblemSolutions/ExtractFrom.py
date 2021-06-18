@@ -20,8 +20,7 @@ def getProblemName(problem_link):
         print(e)
         return -1
 
-def getProblemData(problem_link, dic_problem_Data):
-    problemName = getProblemName(problem_link)
+def getProblemData(problemName, dic_problem_Data):
     if problemName in dic_problem_Data:
         return dic_problem_Data[problemName]
     return -1
