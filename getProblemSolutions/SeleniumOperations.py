@@ -37,6 +37,11 @@ def readSourceLines(driver):
         lines += i.text + '\n'
     return lines
 
+def getTableTR(driver, className):
+    table = driver.find_element_by_class_name(className)
+    rows = table.find_elements_by_tag_name('tr')[1:]
+    return rows
+    
 def createDriver():
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument("start-maximized")

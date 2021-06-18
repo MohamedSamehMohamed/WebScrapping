@@ -21,8 +21,7 @@ def storeProblems(withLogin):
         try:
             currentUrl = 'https://codeforces.com/submissions/'+username+'/page/' + str(pageNumber)
             openUrl(driver, currentUrl)
-            table = driver.find_element_by_class_name('status-frame-datatable')
-            rows = table.find_elements_by_tag_name('tr')[1:]
+            rows = getTableTR(driver, 'status-frame-datatable')
             submissionsLink = getSubmissionsLink(rows)
             for submission in submissionsLink:
                 try:
