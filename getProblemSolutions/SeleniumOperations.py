@@ -20,10 +20,13 @@ def send_keys(driver, xpath, key):
 
 def openUrl(driver, url):
     for i in range(5):
-        if driver.current_url == url:
-            break
-        driver.get(url)
-        time.sleep(3)
+        try:
+            if driver.current_url == url:
+                break
+            driver.get(url)
+            time.sleep(3)
+        except:
+            time.sleep(1)
     if driver.current_url != url:
         raise Exception('cant open the url')
 def readSourceLines(driver):

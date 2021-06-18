@@ -7,8 +7,8 @@ from ExtractFrom import *
 from SeleniumOperations import *
 
 username = 'MohamedSameh'
-email = 'MohamedSameh'
-password = 'Simo' + '01090282064'
+email = ''
+password = ''
 
 def storeProblems(withLogin):
     dic_problem_Data = getProblemTags()
@@ -34,13 +34,13 @@ def storeProblems(withLogin):
                     add(submission.getProblemStoreName(), lines, submission.submissionLang)
                     printProblemData(submission.problem_real_name, dic_problem_Data)
                 except Exception as e:
-                    print(e)
+                    print('1 ', e)
                     continue
         except Exception as e:
-            print(e)
+            print('2 ', e)
             continue
     driver.quit()
 
 # set 0 to get problems without login
 # set 1 to get problems with login
-storeProblems(1)
+storeProblems(0)
