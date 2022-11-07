@@ -65,26 +65,7 @@ def get_problem_text(driver, problem_link):
     print (e)
     # something wrong , just return None
     return None
-'''
-this part not done yet 
-def get_solution_link(link):
-  return link + 'solution'
-
-def get_problem_solution_text(driver, problem_solution_link):
-  try:
-    openUrl(driver, problem_solution_link)
-    html = driver.page_source
-    soup = BeautifulSoup(html, "html.parser")
-    solution_text = soup.find("div", {"class": "_16yfq _2YoR3"}).get_text()
-    return solution_text
-  except:
-    return None
-
-def add_solution(driver, link, dic):
-  solution = get_problem_solution_text(driver, get_solution_link(link))
-  if solution != None:
-    dic['problem_solution'] = solution
-'''
+  
 def save_problem_text(dic):
   # make a folder with difficulty [easy, medium, hard]
   folder_name = dic['problem_difficulty']
@@ -112,8 +93,6 @@ def save_problem_text(dic):
         else:
           f.write(line + '\n')
   print (dic['problem_name'] + ' added')
-
-
 
 if __name__ == '__main__':
   # to open the browser
