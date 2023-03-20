@@ -1,101 +1,92 @@
-from SeleniumOperations import openUrl
+from selenium.webdriver.common.by import By
+
 
 class Problem:
-    def __init__(self, problemName, submissionLink, problem_real_name, submissionLang):
-        self.problemName = problemName
-        self.submissionLink = submissionLink
-        self.problem_real_name = problem_real_name
-        self.submissionLang = submissionLang
+    def __init__(self, problem_name, submission_link, real_name, submission_lang):
+        self.problem_name = problem_name
+        self.submission_link = submission_link
+        self.real_name = real_name
+        self.submission_lang = submission_lang
 
-    def getProblemStoreName(self):
-        problem_name = self.problemName.split('-')[1]
-        problem_name = self.problem_real_name + '-' + problem_name
+    def get_store_name(self):
+        problem_name = self.problem_name.split('-')[1]
+        problem_name = self.real_name + '-' + problem_name
         return problem_name
 
-def getSubmissionsLink(rows):
-    list = []
+
+def get_submissions(rows):
+    problems = []
     for row in rows:
-        columns = row.find_elements_by_tag_name('td')
+        columns = row.find_elements(By.TAG_NAME, 'td')
         problem_name = columns[3].text
-        problem_link = columns[3].find_element_by_tag_name('a').get_attribute('href')
+        problem_link = columns[3].find_element(By.TAG_NAME, 'a').get_attribute('href')
         lang = columns[4].text
-        # check if it can be open
-        canSeeCode = 0
+
+        # Check if the code can be seen
+        can_see_code = False
         try:
-            temp = columns[0].find_element_by_class_name('hiddenSource')
-            canSeeCode = 0
+            columns[0].find_element(By.CLASS_NAME, 'hiddenSource')
         except:
-            canSeeCode = 1
-        if not canSeeCode:
+            can_see_code = True
+        if not can_see_code:
             continue
+
         if columns[5].text == 'Accepted':
-            submissionId = columns[0].text
-            contestId = getContestId(problem_link)
-            submissionLink = 'https://codeforces.com/'+contestId + '/submission/' + str(submissionId)
-            problemName = columns[3].text
-            submissionLang = columns[4].text
-            problem_real_name = getProblemName(problem_link)
-            list.append(Problem(problemName, submissionLink, problem_real_name, submissionLang))
-    return list
+            submission_id = columns[0].text
+            contest_id = get_contest_id(problem_link)
+            submission_link = 'https://codeforces.com/{}/submission/{}'.format(contest_id, submission_id)
 
-def printProblemData(problem_real_name, dic_problem_Data):
-    problemData = getProblemData(problem_real_name, dic_problem_Data)
-    if problemData != -1:
-        problemTags = problemData['tags']
-        problemRating = problemData['rating']
-        print('Tags -> ' , problemTags)
-        print('Rating -> ' , problemRating)
+            real_name = get_problem_name(problem_link)
+            problems.append(Problem(problem_name, submission_link, real_name, lang))
+
+    return problems
+
+
+def get_problem_data(real_name, problem_data):
+    if real_name in problem_data:
+        problem_tags = problem_data[real_name]['tags']
+        problem_rating = problem_data[real_name]['rating']
+        return 'rate: ' + str(problem_rating) + '\n' + 'tags: ' + problem_tags
     else:
-        print('no data exist for the problem')
-
-def getProblemName(problem_link):
+        return ''
+def get_problem_name(problem_link):
     try:
-        strs = problem_link.split('/')
-        contestId = -1
-        problemOrder = -1
-        cnt = 0
-        idx = -1
-        for s in strs:
-            if s == 'gym' or s == 'contest':
-                idx = cnt
+        link_parts = problem_link.split('/')
+        contest_id = ''
+        problem_order = ''
+        for i, part in enumerate(link_parts):
+            if part in ('gym', 'contest'):
+                contest_id = link_parts[i + 1]
+                problem_order = link_parts[i + 3]
                 break
-            cnt += 1
-        if idx == -1:
+        if not contest_id or not problem_order:
             return -1
-        contestId = strs[idx+1]
-        problemOrder = strs[idx+3]
-        return str(contestId) + str(problemOrder)
-    except:
+        return '{}{}'.format(contest_id, problem_order)
+    except Exception as e:
         print(e)
         return -1
 
-def getProblemData(problemName, dic_problem_Data):
-    if problemName in dic_problem_Data:
-        return dic_problem_Data[problemName]
-    return -1
 
-def getLastPageNumber(driver, username):
+def get_problem_data(problem_name, dic_problem_data):
+    return dic_problem_data.get(problem_name, -1)
+
+
+def get_last_page_number(driver, username):
     try:
-        currentUrl = 'https://codeforces.com/submissions/'+username+'/page/1'
-        openUrl(driver, currentUrl)
-        lastPageNumber = driver.find_elements_by_class_name('pagination')[1].find_elements_by_tag_name('li')[-2].find_element_by_tag_name('span')
-        return int(lastPageNumber.text)
+        current_url = 'https://codeforces.com/submissions/{}/page/1'.format(username)
+        driver.openUrl(current_url)
+        pagination = driver.find_element(By.CLASS_NAME, 'pagination')
+        last_page_number = pagination.find_elements(By.TAG_NAME, 'li')[-2].find_element(By.TAG_NAME, 'span')
+        return int(last_page_number.text)
     except Exception as e:
-        print('here ', e)
+        print('Error getting last page number:', e)
         return 1
 
-def getContestId(problem_link):
-    linkParts = problem_link.split('/')
-    contestId = ''
-    cnt = -1
-    for part in linkParts:
-        if str(part) == 'gym' or str(part) == 'contest':
-            cnt += 1
-        if cnt == -1:
-            continue
-        contestId += str(part)
-        cnt+=1
-        if cnt == 2:
-            break
-        contestId += '/'
-    return contestId
+
+def get_contest_id(problem_link):
+    link_parts = problem_link.split('/')
+    for i in range(len(link_parts)):
+        if link_parts[i] in ('gym', 'contest'):
+            return link_parts[i] + '/' + link_parts[i+1]
+
+    return ''

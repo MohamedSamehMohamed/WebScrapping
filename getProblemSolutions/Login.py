@@ -25,10 +25,10 @@ def load_cookies(driver, email, password):
 
 def log_in(driver, email, password):
     try:
-        openUrl(driver, url)
-        send_keys(driver, email_xpath, email)
-        send_keys(driver, pass_xpath, password)
-        click(driver, login_xp)
+        driver.openUrl(url)
+        driver.send_keys(email_xpath, email)
+        driver.send_keys(pass_xpath, password)
+        driver.click(login_xp)
         save_cookies(driver)
     except Exception as e:
         print(e)
