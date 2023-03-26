@@ -20,6 +20,11 @@ class WebDriver:
 
     def clickEsc(self):
         ActionChains(self.driver).send_keys(Keys.ESCAPE).perform()
+    def add_cookie(self, cookie):
+        self.driver.add_cookie(cookie)
+
+    def refresh(self):
+        self.driver.refresh()
 
     def click(self, xpath):
         button = self.driver.find_element(By.XPATH, xpath)
@@ -48,10 +53,6 @@ class WebDriver:
             lines += i.text + '\n'
         return lines
 
-    def getTableTR(self, className):
-        table = self.driver.find_element(By.CLASS_NAME, className)
-        rows = table.find_elements(By.TAG_NAME, 'tr')[1:]
-        return rows
     def find_element(self, method, name):
         return self.driver.find_element(method, name)
     def find_elements(self, method, name):

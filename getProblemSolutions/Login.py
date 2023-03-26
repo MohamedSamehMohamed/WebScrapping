@@ -1,5 +1,3 @@
-from SeleniumOperations import *
-import time
 import pickle
 from OSPath import cookies_file_path
 
@@ -33,5 +31,5 @@ def log_in(driver, email, password):
     except Exception as e:
         print(e)
 
-def Login(driver, email, password):
+def login(driver, email, password):
     load_cookies(driver, email, password)

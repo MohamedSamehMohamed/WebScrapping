@@ -3,26 +3,24 @@ import requests
 def request(url):
     return requests.get(url).json()
 
-def getProblemTags():
+def get_problem_tags():
     dic = {}
     try:
         url = "https://codeforces.com/api/problemset.problems"
-        json = request(url)
-        res = json['result']
-        res = res['problems']
+        res = request(url)['result']['problems']
+
         for problem in res:
-            problemName = str(problem['contestId']) + str(problem['index'])
-            problemRating  = 0
+            problem_name = str(problem['contestId']) + str(problem['index'])
+            problem_rating  = 0
             tags = set()
             if 'rating' in problem:
-                problemRating = problem['rating']
+                problem_rating = problem['rating']
             if 'tags' in problem:
                 tags = problem['tags']
-            temp_dic = {}
-            temp_dic['tags'] = tags
-            temp_dic['rating'] = problemRating
-            dic[problemName] = temp_dic
+            temp_dic = {'tags': tags, 'rating': problem_rating}
+            dic[problem_name] = temp_dic
         return dic
     except Exception as e:
+        print ('can\'t get problem tags')
         print(e)
         return dic

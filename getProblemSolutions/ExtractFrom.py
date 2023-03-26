@@ -23,6 +23,8 @@ def get_submissions(rows):
         lang = columns[4].text
 
         # Check if the code can be seen
+        # if there is element with class name 'hiddenSource'
+        # so it is a code that can't be seen
         can_see_code = False
         try:
             columns[0].find_element(By.CLASS_NAME, 'hiddenSource')
@@ -42,13 +44,6 @@ def get_submissions(rows):
     return problems
 
 
-def get_problem_data(real_name, problem_data):
-    if real_name in problem_data:
-        problem_tags = problem_data[real_name]['tags']
-        problem_rating = problem_data[real_name]['rating']
-        return 'rate: ' + str(problem_rating) + '\n' + 'tags: ' + problem_tags
-    else:
-        return ''
 def get_problem_name(problem_link):
     try:
         link_parts = problem_link.split('/')
@@ -64,29 +59,40 @@ def get_problem_name(problem_link):
         return '{}{}'.format(contest_id, problem_order)
     except Exception as e:
         print(e)
-        return -1
+        return 'problem-with-out-a-name'
 
 
 def get_problem_data(problem_name, dic_problem_data):
-    return dic_problem_data.get(problem_name, -1)
-
+    problem_meta = dic_problem_data.get(problem_name, -1)
+    tags = ''
+    rating = ''
+    if 'tags' in problem_meta:
+        tags = 'Problem Tags: ' + str(problem_meta['tags'])
+    if 'rating' in problem_meta:
+        rating = ' Problem Rate: ' + str(problem_meta['rating'])
+    problem_meta = tags + rating
+    return problem_meta
 
 def get_last_page_number(driver, username):
     try:
         current_url = 'https://codeforces.com/submissions/{}/page/1'.format(username)
         driver.openUrl(current_url)
-        pagination = driver.find_element(By.CLASS_NAME, 'pagination')
-        last_page_number = pagination.find_elements(By.TAG_NAME, 'li')[-2].find_element(By.TAG_NAME, 'span')
-        return int(last_page_number.text)
+        pagination = driver.find_elements(By.CLASS_NAME, 'page-index')[-1].text
+        return int(pagination)
     except Exception as e:
-        print('Error getting last page number:', e)
-        return 1
+        print('Error getting last submission page number:', e)
+        print ('assume it will be 10 pages')
+        return 10
 
+def get_submissions_row(driver):
+    class_name = 'status-frame-datatable'
+    table = driver.find_element(By.CLASS_NAME, class_name)
+    rows = table.find_elements(By.TAG_NAME, 'tr')[1:]
+    return rows
 
 def get_contest_id(problem_link):
     link_parts = problem_link.split('/')
     for i in range(len(link_parts)):
         if link_parts[i] in ('gym', 'contest'):
             return link_parts[i] + '/' + link_parts[i+1]
-
     return ''
