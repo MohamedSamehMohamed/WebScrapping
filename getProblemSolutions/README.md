@@ -1,7 +1,5 @@
-This is a simple script to get problem solutions from codeforces
+• This script simplifies the process of storing your [codeforces](https://codeforces.com/) solutions on your computer and uploading them to GitHub. 
 
-the script login to your codeforces account then browes all your submissions
+• Additionally, it provides valuable information about each problem, including the data structures and algorithms used to solve them,  as well as the problem's rating on [codeforces](https://codeforces.com/).
 
-you can use the script without login
-
-login is needed if some solutions appear only to you, for example in Gym.
+• I utilized Selenium for web scraping solutions and Beautiful Soup for parsing HTML code
